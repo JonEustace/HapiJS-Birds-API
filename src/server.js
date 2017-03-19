@@ -2,6 +2,7 @@ import Hapi from 'hapi';
 import {jwtKey} from '../credentials';
 import jwt from 'jsonwebtoken';
 import routes from './routes';
+import errorHandler from './errorhandler';
 
 const server = new Hapi.Server();
 
@@ -38,6 +39,3 @@ server.start(err => {
     console.log(`Server started at ${ server.info.uri } Protocol: ${server.info.protocol}`);
 });
 
-function errorHandler(message, err) {
-    console.error(message, err);
-}
