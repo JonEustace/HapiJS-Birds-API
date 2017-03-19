@@ -1,6 +1,8 @@
 import Knex from './knex';
 import jwt from 'jsonwebtoken';
 import errorHandler from './errorhandler';
+import GUID from 'node-uuid';
+import {jwtKey} from '../credentials';
 
 const routes = [
 //GET route for birds
@@ -46,7 +48,7 @@ const routes = [
                 name: bird.name,
                 species: bird.species,
                 picture_url: bird.picture_url,
-                guid,
+                guid
 
             }).then(() => {
                 reply({
@@ -82,7 +84,9 @@ const routes = [
                         // You can have anything you want here. ANYTHING. This decoded token will be passed onto a request handler.
                         username,
                         scope: user.guid,
-                    }, 'vZiYpmTzqXMp8PpYXKwqc9ShQ1UhyAfy', {
+                    },
+                        jwtKey,
+                        {
                         algorithm: 'HS256',
                         expiresIn: '1h',
                     });

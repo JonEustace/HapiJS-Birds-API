@@ -20,6 +20,7 @@
     "hapi-auth-jwt": "^4.0.0",
     "jsonwebtoken": "^7.3.0",
     "knex": "^0.12.8",
+    "node-uuid": "^1.4.7",
     "pg": "^6.1.4"
   }
 }
