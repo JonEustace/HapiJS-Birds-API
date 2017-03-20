@@ -61,6 +61,66 @@ const routes = [
             });
         }
     },
+    {
+        path: '/birds/{birdGuid}',
+        method: 'PUT',
+        config: {
+            auth: {
+                strategy: 'token',
+            },
+            pre:[
+                {
+                    method: ( request, reply ) => {
+                        const { birdGuid } = request.params
+                            , { scope }    = request.auth.credentials;
+                        Knex('birds').where({
+                            guid: birdGuid,
+                        }).select('owner').then(([result]) => {
+                            // When there is no matching result in the DB.
+                            if(!result) {
+                                //reply.takeover overrides the handler with our own custom message.
+                                reply({
+                                    error: true,
+                                    errMessage: `the bird with id ${birdGuid} was not found`
+                                }).takeover();
+                            }
+                            // If the user isn't the owner of the bird record.
+                            if(result.owner !== scope ) {
+
+                                reply({
+                                    error: true,
+                                    errMessage: `the bird with id ${ birdGuid } is not in the current scope`
+                                }).takeover();
+                            }
+                            return reply.continue();
+                        });
+                    }
+                }
+            ]
+        },
+        handler: (request, reply) => {
+
+            const {birdGuid} = request.params
+                , {bird}     = request.payload;
+
+            Knex('birds').where({
+                guid: birdGuid,
+            }).update({
+
+                name: bird.name,
+                species: bird.species,
+                picture_url: bird.picture_url,
+                isPublic: bird.isPublic,
+
+            }).then(() => {
+                reply({
+                    message: 'successfully updated bird'
+                });
+            }).catch(() => {
+                reply('server-side error');
+            });
+        }
+    },
 //POST route for authentication
     {
         path: '/auth',
